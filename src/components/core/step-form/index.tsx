@@ -46,7 +46,7 @@ export function StepForm({ featureName, stepName, requirements, fieldConfig }: S
 
 	return (
 		<AutoForm formSchema={schema!} fieldConfig={fieldConfig} onSubmit={handleSubmit} className={cn('grid', step?.config?.extraClass)}>
-			{step?.config.extraComponent && <step.config.extraComponent requirements={requirements} />}
+			{step?.config.extraComponent && <step.config.extraComponent featureName={featureName} requirements={requirements} />}
 			<AutoFormSubmit className='order-last justify-self-end'>{step?.config?.btnText ?? 'Siguiente'}</AutoFormSubmit>
 		</AutoForm>
 	)
