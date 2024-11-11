@@ -55,13 +55,6 @@ const biometricsStep = new Step({
 	btnText: 'Vamos!',
 })
 
-const biometricsStatusStep = new Step({
-	type: 'link',
-	name: 'estado-biometria',
-	title: 'Validación de datos',
-	getRequirements: getBiometricsStatusAction as any,
-})
-
 const signatureStep = new Step({
 	type: 'link',
 	name: 'firma',
@@ -134,7 +127,13 @@ export const features = [
 				extraComponent: AddressSearch,
 			}),
 			biometricsStep,
-			biometricsStatusStep,
+			new Step({
+				type: 'link',
+				name: 'estado-biometria',
+				title: 'Prueba de vida exitosa',
+				messages: ['Completaste la prueba de vida, continúa con el proceso para aquirir tu tarjeta'],
+				getRequirements: getBiometricsStatusAction as any,
+			}),
 			proofOfIncomeStep,
 			proofOfAddressStep,
 			signatureStep,
@@ -198,7 +197,13 @@ export const features = [
 				// extraComponent: AddressSearch,
 			}),
 			biometricsStep,
-			biometricsStatusStep,
+			new Step({
+				type: 'link',
+				name: 'estado-biometria',
+				title: 'Prueba de vida exitosa',
+				messages: ['Completaste la prueba de vida, continúa con el proceso para adquirir tu préstamo'],
+				getRequirements: getBiometricsStatusAction as any,
+			}),
 			proofOfIncomeStep,
 			proofOfAddressStep,
 			signatureStep,
