@@ -5,8 +5,6 @@ export const base64Schema = z.string().refine((value) => {
 		// Check if the value is a valid base64 string
 		const binaryData = Buffer.from(value, 'base64')
 
-		console.log(value)
-
 		// // Check if the binary data represents an image
 		// if (!['image/jpeg', 'image/png'].includes(binaryData.toString('utf-8').split(',')[0].split(':')[1].split(';')[0])) {
 		// 	console.log('kekakakakaka')

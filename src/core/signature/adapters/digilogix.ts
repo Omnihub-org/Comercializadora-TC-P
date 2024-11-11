@@ -84,8 +84,6 @@ export class DigilogixSignatureAdapter extends SignatureAdapter {
 
 		const form = doc.getForm()
 
-		// console.log(form.getFields().map((field) => field.getName())) // [ 'name', 'nationalId', 'address', 'amount', 'tna' ]
-
 		form.getTextField('name').setText(lead.firstName + ' ' + lead.lastName)
 		form.getTextField('nationalId').setText(lead.nationalId || '')
 		form

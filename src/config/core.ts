@@ -42,7 +42,7 @@ type BaseStepConfig<RFn extends RequirementsFn | undefined> = BaseConfig & {
 	title: string
 	messages?: string[]
 	extraClass?: string
-	extraComponent?: React.ComponentType<{ requirements: any }>
+	extraComponent?: React.ComponentType<{ requirements: any; featureName: FeatureName }>
 	btnText?: string
 	btnDisabled?: boolean
 	getRequirements?: RFn

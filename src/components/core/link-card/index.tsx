@@ -42,7 +42,7 @@ export function LinkCard(linkCardProps: LinkCardProps) {
 					</li>
 				))}
 			</ul>
-			{ExtraComponent && <ExtraComponent requirements={requirements} />}
+			{ExtraComponent && <ExtraComponent featureName={featureName} requirements={requirements} />}
 			{btnDisabled || (
 				<Button onClick={handleClick} disabled={loading} size='lg' className='mt-8 w-max min-w-28 self-end'>
 					{!loading ? (btnText ?? 'Siguiente') : <Spinner />}

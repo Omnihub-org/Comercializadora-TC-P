@@ -41,7 +41,7 @@ export async function getBiometricsStatusAction(featureName: FeatureName) {
 	if (!lead) redirect(`/${featureName}`)
 
 	if (!lead.biometricsVerificationId) {
-		throw new Error('No biometrics verification id')
+		return { status: BiometricsStatus.PENDING }
 	}
 
 	if (lead.biometricsStatus === BiometricsStatus.COMPLETED) {
@@ -68,11 +68,15 @@ export async function checkBiometricsStatusAction(featureName: FeatureName) {
 	const lead = await getCurrentLead(FeatureNameToDBFeature[featureName])
 
 	if (!lead) {
-		throw new Error('No lead')
+		redirect(`/${featureName}`)
 	}
 
 	if (!lead.biometricsVerificationId) {
-		throw new Error('No biometrics verification id')
+		redirect(feature.getPath('biometria'))
+	}
+
+	if (lead.biometricsStatus === BiometricsStatus.COMPLETED) {
+		return redirect(feature.getPath('recibo-de-sueldo'))
 	}
 
 	const biometricsStatus = await siteConfig.biometrics.adapter.getBiometricsStatus({
@@ -80,10 +84,10 @@ export async function checkBiometricsStatusAction(featureName: FeatureName) {
 	})
 
 	if (biometricsStatus !== BiometricsStatus.COMPLETED) {
-		throw new Error('Biometrics not completed')
+		redirect(feature.getPath('biometria'))
 	}
 
 	await db.lead.update({ where: { id: lead.id }, data: { biometricsStatus } })
 
-	// return
+	redirect(feature.getPath('recibo-de-sueldo'))
 }

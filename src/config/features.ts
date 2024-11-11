@@ -20,6 +20,10 @@ import { MaxLimit } from '@/components/core/extra-components/max-limit'
 import { finishFeatureAction, startFeatureAction } from '@/actions/core/feature'
 import { proofOfAddressSchema } from '@/schemas/features/proof-of-address'
 import { proofOfIncomeSchema } from '@/schemas/features/proof-of-income'
+import { BiometricsStatus } from '@/components/core/extra-components/biometrics-status'
+import { getQuoterRequirementsAction } from '@/actions/quoter'
+import { getSummaryAction } from '@/actions/core/summary'
+import OperationSummary from '@/components/core/extra-components/operation-summary'
 
 const name = 'Mariana'
 
@@ -42,6 +46,14 @@ const personalDataStep = new Step({
 	fieldConfig: personalDataFields,
 })
 
+const operationSummaryStep = new Step({
+	type: 'link',
+	name: 'resumen-de-operacion',
+	title: 'Resumen de la operación',
+	extraComponent: OperationSummary as any,
+	getRequirements: getSummaryAction as any,
+})
+
 const biometricsStep = new Step({
 	type: 'link',
 	name: 'biometria',
@@ -60,8 +72,7 @@ const signatureStep = new Step({
 	name: 'firma',
 	title: 'Firmar contrato',
 	action: performSignatureFlowAction,
-	getRequirements: checkBiometricsStatusAction as any,
-	messages: ['Ahora vamos a firmar el contrato!'],
+	messages: ['1. Aceptá términos y condiciones', '2. Ingresa el código', '3. Dibuja tu firma'],
 	btnText: 'Vamos!',
 })
 
@@ -94,7 +105,7 @@ export const features = [
 				type: 'link',
 				name: 'bienvenida',
 				title: `Hola ${name}!`,
-				messages: ['Tenés un préstamo aprobado de hasta'],
+				messages: ['Tenés una tarjeta aprobada de'],
 				getRequirements: getScoringAction,
 				extraComponent: MaxLimit,
 				btnText: 'Lo quiero!',
@@ -124,7 +135,6 @@ export const features = [
 				title: 'Completá tu dirección',
 				schema: addressSchema,
 				fieldConfig: addressFieldsCreditCard,
-				extraComponent: AddressSearch,
 			}),
 			biometricsStep,
 			new Step({
@@ -132,10 +142,12 @@ export const features = [
 				name: 'estado-biometria',
 				title: 'Prueba de vida exitosa',
 				messages: ['Completaste la prueba de vida, continúa con el proceso para aquirir tu tarjeta'],
-				getRequirements: getBiometricsStatusAction as any,
+				getRequirements: getBiometricsStatusAction,
+				action: checkBiometricsStatusAction,
 			}),
 			proofOfIncomeStep,
 			proofOfAddressStep,
+			operationSummaryStep,
 			signatureStep,
 			new Step({
 				type: 'link',
@@ -182,7 +194,7 @@ export const features = [
 				name: 'cotizador',
 				title: 'Tenemos esta oferta para vos!',
 				description: 'Elegí el monto y las cuotas',
-				getRequirements: getScoringAction,
+				getRequirements: getQuoterRequirementsAction,
 				schema: createQuoterSchema,
 				fieldConfig: quoterFields,
 				extraComponent: Quota,
@@ -200,12 +212,15 @@ export const features = [
 			new Step({
 				type: 'link',
 				name: 'estado-biometria',
-				title: 'Prueba de vida exitosa',
-				messages: ['Completaste la prueba de vida, continúa con el proceso para adquirir tu préstamo'],
-				getRequirements: getBiometricsStatusAction as any,
+				title: 'Resultado de la prueba de vida',
+				// messages: ['Completaste la prueba de vida, continúa con el proceso para adquirir tu préstamo'],
+				extraComponent: BiometricsStatus,
+				getRequirements: getBiometricsStatusAction,
+				action: checkBiometricsStatusAction,
 			}),
 			proofOfIncomeStep,
 			proofOfAddressStep,
+			operationSummaryStep,
 			signatureStep,
 			new Step({
 				type: 'link',

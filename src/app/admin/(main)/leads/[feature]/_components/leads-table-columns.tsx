@@ -7,21 +7,22 @@ import { type ColumnDef } from '@tanstack/react-table'
 
 import { formatDate } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuShortcut,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 
 import { Lead } from '@prisma/client'
 
 interface GetColumnsProps {
 	setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<Lead> | null>>
+}
+
+function downloadBase64(base64: string, filename: string) {
+	// const blob = new Blob([base64], { type: 'image/jpeg' })
+	// const url = URL.createObjectURL(blob)
+	const a = document.createElement('a')
+	a.href = base64
+	a.download = filename
+	a.click()
 }
 
 export function getColumns({ setRowAction }: GetColumnsProps): ColumnDef<Lead>[] {
@@ -83,28 +84,28 @@ export function getColumns({ setRowAction }: GetColumnsProps): ColumnDef<Lead>[]
 				name: 'Fecha',
 			},
 		},
-		// {
-		// 	id: 'actions',
-		// 	cell: function Cell({ row }) {
-		// 		return (
-		// 			<DropdownMenu>
-		// 				<DropdownMenuTrigger asChild>
-		// 					<Button aria-label='Open menu' variant='ghost' className='flex size-8 p-0 data-[state=open]:bg-muted'>
-		// 						<DotsHorizontalIcon className='size-4' aria-hidden='true' />
-		// 					</Button>
-		// 				</DropdownMenuTrigger>
-		// 				<DropdownMenuContent align='end' className='w-40'>
-		// 					<DropdownMenuItem onSelect={() => setRowAction({ row, type: 'update' })}>Edit</DropdownMenuItem>
-		// 					<DropdownMenuSeparator />
-		// 					<DropdownMenuItem onSelect={() => setRowAction({ row, type: 'delete' })}>
-		// 						Delete
-		// 						<DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-		// 					</DropdownMenuItem>
-		// 				</DropdownMenuContent>
-		// 			</DropdownMenu>
-		// 		)
-		// 	},
-		// 	size: 40,
-		// },
+		{
+			id: 'actions',
+			cell: function Cell({ row }) {
+				return (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button aria-label='Open menu' variant='ghost' className='flex size-8 p-0 data-[state=open]:bg-muted'>
+								<DotsHorizontalIcon className='size-4' aria-hidden='true' />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align='end'>
+							<DropdownMenuItem onSelect={() => downloadBase64(row.original.proofOfAddressBase64!, 'factura-de-servicios.jpg')}>
+								Descargar factura de servicios
+							</DropdownMenuItem>
+							<DropdownMenuItem onSelect={() => downloadBase64(row.original.proofOfIncomeBase64!, 'recibo-de-sueldo.jpg')}>
+								Descargar recibo de sueldo
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				)
+			},
+			size: 40,
+		},
 	]
 }
