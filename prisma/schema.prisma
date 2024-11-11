@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider                 = "zod-prisma-types"
+  output                   = "../src/generated/zod"
+  createInputTypes         = false
+  addIncludeType           = false
+  addSelectType            = false
+  writeNullishInModelTypes = true
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  username      String    @unique
+  password_hash String
+  sessions      Session[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+enum Gender {
+  Masculino
+  Femenino
+}
+
+enum Feature {
+  LOAN
+  CREDIT_CARD
+}
+
+enum BiometricsStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum SignatureStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum LeadStatus {
+  PENDING
+  COMPLETED
+}
+
+model Lead {
+  id         String     @id @default(uuid())
+  status     LeadStatus @default(PENDING)
+  firstName  String?
+  lastName   String?
+  nationalId String?
+  gender     Gender?
+  email      String?
+  phone      String?
+
+  province         String?
+  city             String?
+  district         String?
+  zipCode          String?
+  street           String?
+  streetNumber     Int?
+  apartment        String?
+  employmentStatus String?
+  creditPurpose    String?
+
+  proofOfIncomeBase64  String?
+  proofOfAddressBase64 String?
+
+  amount       Float?
+  installments Float?
+
+  biometricsVerificationId String?
+  signatureId              String?
+
+  biometricsStatus BiometricsStatus @default(PENDING)
+  signatureStatus  SignatureStatus  @default(PENDING)
+
+  requestedFeature Feature
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
