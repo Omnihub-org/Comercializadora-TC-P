@@ -20,7 +20,7 @@ export default function AutoFormFile({ label, isRequired, fieldConfigItem, field
 
 		// Compress the image using CompressorJS
 		new Compressor(file, {
-			quality: 0.4, // Adjust compression quality (0 to 1)
+			quality: 0.2, // Adjust compression quality (0 to 1)
 			success(compressedFile) {
 				const reader = new FileReader()
 				reader.onloadend = () => {
