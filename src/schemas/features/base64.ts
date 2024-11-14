@@ -11,8 +11,8 @@ export const base64Schema = z.string().refine((value) => {
 		// 	return false
 		// }
 
-		// Check if the image size is less than or equal to 1MB
-		return binaryData.length <= 1 * 1024 * 1024
+		// Check if the image size is less than or equal to 2MB
+		return binaryData.length <= 2 * 1024 * 1024
 	} catch (error) {
 		return false
 	}

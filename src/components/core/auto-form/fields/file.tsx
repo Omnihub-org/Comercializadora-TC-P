@@ -4,6 +4,7 @@ import AutoFormLabel from '../common/label'
 import AutoFormTooltip from '../common/tooltip'
 import { AutoFormInputComponentProps } from '../types'
 import { useState } from 'react'
+import Compressor from 'compressorjs'
 
 export default function AutoFormFile({ label, isRequired, fieldConfigItem, fieldProps, field }: AutoFormInputComponentProps) {
 	const { showLabel: _showLabel, ...fieldPropsWithoutShowLabel } = fieldProps
@@ -12,17 +13,33 @@ export default function AutoFormFile({ label, isRequired, fieldConfigItem, field
 	const [file, setFile] = useState<File>()
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0]
+		let file = e.target.files?.[0]
 		if (!file) return
 
 		setFile(file)
 
-		const reader = new FileReader()
-		reader.onloadend = () => {
-			const base64String = reader.result as string
-			fieldPropsWithoutShowLabel.onChange(base64String)
-		}
-		reader.readAsDataURL(file)
+		// Compress the image using CompressorJS
+		new Compressor(file, {
+			quality: 0.4, // Adjust compression quality (0 to 1)
+			success(compressedFile) {
+				const reader = new FileReader()
+				reader.onloadend = () => {
+					const base64String = reader.result as string
+					fieldPropsWithoutShowLabel.onChange(base64String)
+				}
+				reader.readAsDataURL(compressedFile)
+			},
+			error(err) {
+				console.error('Image compression failed:', err)
+				// Fallback to original file if compression fails
+				const reader = new FileReader()
+				reader.onloadend = () => {
+					const base64String = reader.result as string
+					fieldPropsWithoutShowLabel.onChange(base64String)
+				}
+				reader.readAsDataURL(file)
+			},
+		})
 	}
 
 	return (
